@@ -56,7 +56,7 @@
             </span>
             <button id="toggleAudioBtn" class="text-xs bg-rose-500 text-white px-3 py-1.5 rounded-xl hover:bg-rose-600 transition">Pause</button>
         </div>
-        <!-- Embedded iframe for YouTube track: p0MXxHPp1lY -->
+        <!-- Embedded iframe for YouTube track -->
         <iframe id="youtubeIframe" class="hidden" width="300" height="150" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 
@@ -108,11 +108,10 @@
             <h2 class="font-great-vibes text-5xl sm:text-6xl text-rose-700 mb-4">She Said Yes!</h2>
             <p class="font-playfair text-xl text-slate-700 mb-6">"My heart is, and always will be, yours."</p>
             <p class="text-slate-600 text-sm leading-relaxed mb-8 bg-white/60 p-4 rounded-2xl border border-rose-100">
-                Ben, thank you for making me the happiest person in the entire world. Here is to a lifetime of love, laughter, and endless adventures together! 🥂💖 <br>...<br>
-                Thank you so much for being born to be loved, and for us finding each other. Thank you for coming into my life so I could love you. Out of millions of people searching, I am the luckiest to have you right by my side
+                Ben, thank you for making me the happiest person in the entire world. Here is to a lifetime of love, laughter, and endless adventures together! 🥂💖 <br><br>
+                Thank you so much for being born to be loved, and for us finding each other. Thank you for coming into my life so I could love you. Out of millions of people searching, I am the luckiest to have you right by my side.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <!-- <button onclick="resetProposal()" class="text-xs text-rose-600 hover:underline font-medium">Replay Experience</button> -->
                 <span class="text-slate-300">•</span>
                 <a href="https://www.youtube.com/watch?v=GzCcLw6BHcY" target="_blank" rel="noopener noreferrer" class="text-xs text-rose-600 hover:underline font-medium flex items-center gap-1">
                     🎵 Watch ขอบคุณที่เกิดมาให้รัก
@@ -124,12 +123,12 @@
 
     <!-- Footer -->
     <footer class="relative z-10 py-4 text-center text-xs text-slate-500 font-light">
-        Created with endless love & devotion to  ❤️
+        Created with endless love & devotion ❤️
     </footer>
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Floating Hearts Background Canvas
+        // Floating Background Canvas
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let hearts = [];
@@ -189,7 +188,6 @@
             const noBtn = document.getElementById('noBtn');
             const teaseEl = document.getElementById('teaseMessage');
             
-            // Random translation offset within screen bounds
             const randomX = (Math.random() - 0.5) * 220;
             const randomY = (Math.random() - 0.5) * 160;
             
@@ -201,13 +199,11 @@
         }
 
         function handleNoClick() {
-            // In case they manage to click it on touch screens, turn it into Yes!
             handleYesClick();
         }
 
-        // Yes Button Click & YouTube Music Trigger
+        // Yes Button Click & YouTube Music Trigger (Fixed for iPhone Safari/Chrome)
         function handleYesClick() {
-            // Confetti explosion
             confetti({
                 particleCount: 150,
                 spread: 100,
@@ -215,7 +211,6 @@
                 colors: ['#f43f5e', '#fb7185', '#fda4af', '#ffffff']
             });
 
-            // Transition Cards
             const proposalCard = document.getElementById('proposalCard');
             const successCard = document.getElementById('successCard');
 
@@ -228,12 +223,11 @@
                 }, 50);
             }, 500);
 
-            // Play YouTube Canon in D Audio/Video (Song ID: p0MXxHPp1lY)
+            // iPhone-friendly YouTube URL: includes playsinline=1 & start time
             const playerContainer = document.getElementById('youtubePlayerContainer');
             const youtubeIframe = document.getElementById('youtubeIframe');
             
-            // Embed video with autoplay enabled
-            youtubeIframe.src = "https://www.youtube.com/embed/GzCcLw6BHcY?autoplay=1";
+            youtubeIframe.src = "https://www.youtube.com/embed/GzCcLw6BHcY?autoplay=1&playsinline=1&start=2";
             playerContainer.classList.remove('hidden');
         }
 
@@ -243,11 +237,11 @@
         toggleAudioBtn.addEventListener('click', () => {
             const youtubeIframe = document.getElementById('youtubeIframe');
             if (isPlaying) {
-                youtubeIframe.src = ""; // Stop music
+                youtubeIframe.src = "";
                 toggleAudioBtn.textContent = "Play";
                 isPlaying = false;
             } else {
-                youtubeIframe.src = "https://www.youtube.com/embed/GzCcLw6BHcY?autoplay=1";
+                youtubeIframe.src = "https://www.youtube.com/embed/GzCcLw6BHcY?autoplay=1&playsinline=1&start=2";
                 toggleAudioBtn.textContent = "Pause";
                 isPlaying = true;
             }
