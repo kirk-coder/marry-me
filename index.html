@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Marry Me? 💍</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        .font-great-vibes {
+            font-family: 'Great Vibes', cursive;
+        }
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.4);
+        }
+        .pulse-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(244, 63, 94, 0.3); }
+            50% { box-shadow: 0 0 45px rgba(244, 63, 94, 0.6); }
+        }
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-100 via-pink-50 to-red-100 min-h-screen flex flex-col justify-between relative selection:bg-rose-300 selection:text-rose-900">
+
+    <!-- Floating Background Canvas -->
+    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Embedded YouTube Audio / Video Player Container -->
+    <div id="youtubePlayerContainer" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="glass-card p-3 rounded-2xl shadow-xl flex items-center gap-3">
+            <span class="text-xs font-semibold text-rose-700 font-playfair flex items-center gap-1">
+                <span class="animate-ping h-2 w-2 rounded-full bg-rose-500 inline-block"></span> Now Playing Canon in D
+            </span>
+            <button id="toggleAudioBtn" class="text-xs bg-rose-500 text-white px-3 py-1.5 rounded-xl hover:bg-rose-600 transition">Pause</button>
+        </div>
+        <!-- Embedded iframe for YouTube track: p0MXxHPp1lY -->
+        <iframe id="youtubeIframe" class="hidden" width="300" height="150" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <!-- Header Navigation / Title -->
+    <header class="relative z-10 w-full py-6 px-6 text-center">
+        <h1 class="font-great-vibes text-4xl sm:text-5xl text-rose-700 tracking-wide drop-shadow-sm">A Journey of Our Hearts</h1>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 flex-grow flex items-center justify-center px-4 py-8">
+        
+        <!-- Proposal Card Container -->
+        <div id="proposalCard" class="glass-card max-w-lg w-full rounded-3xl p-8 sm:p-10 shadow-2xl text-center pulse-glow transition-all duration-700">
+            
+            <!-- Ring Icon Animation -->
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-tr from-rose-200 to-pink-100 text-rose-600 mb-6 shadow-inner float-animation">
+                <svg class="w-10 h-10 animate-pulse" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
+                </svg>
+            </div>
+
+            <!-- Question Heading -->
+            <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Will You Marry Me?</h2>
+            <p class="text-slate-600 text-sm sm:text-base font-light mb-8 max-w-sm mx-auto">
+                Every love story is beautiful, but ours is my absolute favorite. Say yes and let's spend forever together. 💕
+            </p>
+
+            <!-- Action Buttons -->
+            <div id="buttonContainer" class="flex items-center justify-center gap-6 relative h-20">
+                <!-- YES BUTTON -->
+                <button id="yesBtn" onclick="handleYesClick()" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-semibold px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-rose-400/50 transform hover:scale-110 transition-all duration-300 z-20 text-lg">
+                    Yes! 🥰
+                </button>
+
+                <!-- NO BUTTON (Evasive & Unclickable) -->
+                <button id="noBtn" onmouseover="dodgeNoButton()" onclick="handleNoClick()" ontouchstart="dodgeNoButton()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-8 py-3.5 rounded-2xl shadow-md transition-all duration-200 absolute right-4 sm:right-12 z-10 text-lg cursor-not-allowed">
+                    No 🙈
+                </button>
+            </div>
+            
+            <p id="teaseMessage" class="text-xs text-rose-500 font-medium mt-4 h-5 transition-opacity duration-300 opacity-0"></p>
+        </div>
+
+        <!-- Success Celebration Card (Hidden initially) -->
+        <div id="successCard" class="glass-card max-w-xl w-full rounded-3xl p-8 sm:p-12 shadow-2xl text-center hidden transform scale-95 opacity-0 transition-all duration-700">
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-tr from-rose-500 to-pink-500 text-white mb-6 shadow-xl animate-bounce">
+                💍✨
+            </div>
+            <h2 class="font-great-vibes text-5xl sm:text-6xl text-rose-700 mb-4">She Said Yes!</h2>
+            <p class="font-playfair text-xl text-slate-700 mb-6">"My heart is, and always will be, yours."</p>
+            <p class="text-slate-600 text-sm leading-relaxed mb-8 bg-white/60 p-4 rounded-2xl border border-rose-100">
+                Thank you for making me the happiest person in the entire world. Here is to a lifetime of love, laughter, and endless adventures together! 🥂💖
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="resetProposal()" class="text-xs text-rose-600 hover:underline font-medium">Replay Experience</button>
+                <span class="text-slate-300">•</span>
+                <a href="https://www.youtube.com/watch?v=p0MXxHPp1lY" target="_blank" rel="noopener noreferrer" class="text-xs text-rose-600 hover:underline font-medium flex items-center gap-1">
+                    🎵 Watch Canon in D on YouTube
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-slate-500 font-light">
+        Created with endless love & devotion ❤️
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Floating Hearts Background Canvas
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        for (let i = 0; i < 30; i++) {
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 12 + 8,
+                speedY: Math.random() * 0.8 + 0.3,
+                speedX: (Math.random() - 0.5) * 0.5,
+                opacity: Math.random() * 0.5 + 0.2,
+                color: Math.random() > 0.3 ? '#fda4af' : '#f43f5e'
+            });
+        }
+
+        function drawHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => {
+                ctx.save();
+                ctx.globalAlpha = h.opacity;
+                ctx.fillStyle = h.color;
+                ctx.font = `${h.size}px sans-serif`;
+                ctx.fillText('❤', h.x, h.y);
+                ctx.restore();
+
+                h.y -= h.speedY;
+                h.x += h.speedX;
+
+                if (h.y < -20) {
+                    h.y = canvas.height + 20;
+                    h.x = Math.random() * canvas.width;
+                }
+            });
+            requestAnimationFrame(drawHearts);
+        }
+        drawHearts();
+
+        // Evasive No Button Logic & Playful Teases
+        const teaseMessages = [
+            "Nice try! But that button doesn't work 😉",
+            "Wrong button, my love! Try the sparkly one 💕",
+            "Error 404: 'No' option not found 🚫",
+            "You can't escape my love that easily! 🥰",
+            "Be a good sport and click Yes! 🌹"
+        ];
+        let teaseIndex = 0;
+
+        function dodgeNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const teaseEl = document.getElementById('teaseMessage');
+            
+            // Random translation offset within screen bounds
+            const randomX = (Math.random() - 0.5) * 220;
+            const randomY = (Math.random() - 0.5) * 160;
+            
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            
+            teaseEl.textContent = teaseMessages[teaseIndex];
+            teaseEl.style.opacity = '1';
+            teaseIndex = (teaseIndex + 1) % teaseMessages.length;
+        }
+
+        function handleNoClick() {
+            // In case they manage to click it on touch screens, turn it into Yes!
+            handleYesClick();
+        }
+
+        // Yes Button Click & YouTube Music Trigger
+        function handleYesClick() {
+            // Confetti explosion
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#f43f5e', '#fb7185', '#fda4af', '#ffffff']
+            });
+
+            // Transition Cards
+            const proposalCard = document.getElementById('proposalCard');
+            const successCard = document.getElementById('successCard');
+
+            proposalCard.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                proposalCard.classList.add('hidden');
+                successCard.classList.remove('hidden');
+                setTimeout(() => {
+                    successCard.classList.remove('opacity-0', 'scale-95');
+                }, 50);
+            }, 500);
+
+            // Play YouTube Canon in D Audio/Video (Song ID: p0MXxHPp1lY)
+            const playerContainer = document.getElementById('youtubePlayerContainer');
+            const youtubeIframe = document.getElementById('youtubeIframe');
+            
+            // Embed video with autoplay enabled
+            youtubeIframe.src = "https://www.youtube.com/embed/p0MXxHPp1lY?autoplay=1";
+            playerContainer.classList.remove('hidden');
+        }
+
+        // Toggle Audio Player visibility / play state
+        const toggleAudioBtn = document.getElementById('toggleAudioBtn');
+        let isPlaying = true;
+        toggleAudioBtn.addEventListener('click', () => {
+            const youtubeIframe = document.getElementById('youtubeIframe');
+            if (isPlaying) {
+                youtubeIframe.src = ""; // Stop music
+                toggleAudioBtn.textContent = "Play";
+                isPlaying = false;
+            } else {
+                youtubeIframe.src = "https://www.youtube.com/embed/p0MXxHPp1lY?autoplay=1";
+                toggleAudioBtn.textContent = "Pause";
+                isPlaying = true;
+            }
+        });
+
+        function resetProposal() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
